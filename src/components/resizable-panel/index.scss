@@ -1,0 +1,52 @@
+:host {
+  display: flex;
+  overflow: hidden;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([vertical]) {
+  flex-direction: column;
+  flex-basis: auto;
+  
+  ::slotted(.knob) {
+    width: 100%;
+    height: var(--resizable-panels-knob-size, 4px);
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: calc(var(--resizable-panels-knob-size, 4px) / 2 * -1);
+    margin-bottom: calc(var(--resizable-panels-knob-size, 4px) / 2 * -1);
+    cursor: row-resize;
+    @apply(--resizable-panels-knob);
+  }
+}
+
+:host(.dragging) ::slotted(*:not(.knob)) {
+  pointer-events: none;
+  user-select: none;
+}
+
+::slotted(:not(.knob)) {
+  overflow: hidden;
+}
+
+::slotted(.knob) {
+  width: var(--resizable-panels-knob-size, 4px);
+  margin-left: calc(var(--resizable-panels-knob-size, 4px) / 2 * -1);
+  margin-right: calc(var(--resizable-panels-knob-size, 4px) / 2 * -1);
+  position: relative;
+  z-index: 1;
+  background-color: var(--resizable-panels-knob-color, white);
+  cursor: col-resize;
+  flex-shrink: 0;
+  @apply(--resizable-panels-knob);
+  
+  &::before {
+    content: var(--resizable-panels-knob-indicator, '');
+    display: inline-block;
+    word-break: break-all;
+    @apply(--resizable-panels-knob-before);
+  }
+}

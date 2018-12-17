@@ -1,0 +1,79 @@
+:host(.selected) > .node-container > .node-row {
+  background-color: var(--paper-tree-selected-background-color, rgba(200, 200, 200, 0.5));
+  color: var(--paper-tree-selected-color, inherit);
+  
+  & > #actions {
+    display: inline-block;
+  }
+}
+
+.node-container {
+  white-space: nowrap;
+  user-select: none;
+}
+
+.node-row {
+  padding-left: 4px;
+  padding-right: 4px;
+  display: flex;
+}
+
+.node-preicon {
+  padding-left: 18px;
+  
+  &.collapsed,
+  &.expanded {
+    padding-left: 0;
+  }
+  
+  &::before {
+    margin-right: 5px;
+    @apply(--paper-tree-toggle-theme);
+  }
+  
+  &.collapsed::before {
+    content: '\\002b';
+  }
+  
+  &.expanded::before {
+    content: '\\2212';
+  }
+}
+
+.node-name {
+  flex-grow: 1;
+  line-height: 24px;
+  padding: 0 4px;
+}
+
+.node-preicon,
+.node-name,
+.node-icon {
+  cursor: pointer;
+}
+
+.node-icon {
+  width: 24px;
+  height: 24px;
+  @apply(--paper-tree-icon-theme);
+}
+
+#actions {
+  display: none;
+  float: right;
+  padding: 0;
+  top: -8px;
+}
+
+ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+li {
+  list-style-type: none;
+}
+
+[hidden] {
+  display: none;
+}

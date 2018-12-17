@@ -1,0 +1,26 @@
+#contextMenu {
+  height: 0;
+  transition: height .2s ease-out;
+  overflow: hidden;
+  position: absolute;
+  z-index: 2;
+  border: 1px outset #bbb;
+  display: none;
+}
+
+paper-item {
+  --paper-item-min-height: 1.2em;
+  --paper-item-selected-weight: normal;
+  --paper-item-focused-before: {
+    background: transparent;
+  };
+  
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 4px 8px;
+  user-select: none;
+  
+  &:hover {
+    background-color: #ddd;
+  }
+}

@@ -1,0 +1,20 @@
+<style include="common"></style>
+<style include="menu-bar"></style>
+<div id="menuBar">
+  <template is="dom-repeat" items="[[menus]]">
+    <menu-item
+        class="menu-root"
+        name="[[item.name]]"
+        menus="[[item.items]]"
+        hide-icon
+        on-tap="toggleMenuMode_"
+        on-mouseover="changeMenu_"></menu-item>
+  </template>
+  <paper-input
+      id="title"
+      label="Untitled project"
+      no-label-float
+      on-focus="forceInputFocusStyle_"
+      on-blur="forceInputBlurStyle_"></paper-input>
+  <div id="iconSlot"><slot></slot></div>
+</div>

@@ -1,0 +1,16 @@
+<style include="common"></style>
+<style include="tree-node"></style>
+<div class="node-container">
+  <div class="node-row">
+    <span class$="[[nodeClasses_]]" on-tap="toggleChildren"></span>
+    <iron-icon class="node-icon" icon="[[data.icon]]" on-tap="select"></iron-icon>
+    <span class="node-name" on-tap="select">[[data.name]]</span>
+  </div>
+  <template is="dom-if" if="[[data.open]]">
+    <ul>
+      <template is="dom-repeat" items="[[data.children]]">
+        <li><tree-node data="[[item]]" selectable="[[item.selectable]]"></tree-node></li>
+      </template>
+    </ul>
+  </template>
+</div>

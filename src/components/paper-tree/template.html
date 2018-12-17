@@ -1,0 +1,15 @@
+<style include="common"></style>
+<style include="tree"></style>
+<template is="dom-repeat" items="[[data]]">
+  <tree-node data="[[item]]"></tree-node>
+</template>
+<paper-listbox id="contextMenu">
+  <paper-item on-tap="renameNode_">
+    <iron-icon icon="create"></iron-icon>
+    Rename
+  </paper-item>
+  <paper-item on-tap="deleteNode_">
+    <iron-icon icon="delete"></iron-icon>
+    Delete
+  </paper-item>
+</paper-listbox>

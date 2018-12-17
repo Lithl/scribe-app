@@ -1,0 +1,31 @@
+resizable-panel {
+  --resizable-panels-knob-color: #eee;
+  --resizable-panels-knob-indicator: '\\00b7\\00b7\\00b7';
+  --resizable-panels-knob: {
+    border: 1px outset #bbb !important;
+  };
+  --resizable-panels-knob-before: {
+    line-height: .5em;
+    position: absolute;
+    top: calc(50% - 11px);
+  };
+  
+  height: calc(100vh - 30px);
+}
+
+#sidebar {
+  width: 200px;
+  overflow-x: auto;
+}
+
+#main {
+  width: calc(100% - 200px);
+}
+
+#sidebar,
+#main {
+  min-width: 150px;
+  max-width: calc(100% - 150px);
+  overflow-y: auto;
+  padding: 8px;
+}

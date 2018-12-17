@@ -1,0 +1,45 @@
+<style include="common"></style>
+<style include="menu-item"></style>
+
+<template is="dom-if" if="[[!hideIcon]]">
+  <div id="icon">
+    <template is="dom-if" if="[[icon]]">
+      <iron-icon icon="[[icon]]"></iron-icon>
+    </template>
+  </div>
+</template>
+
+<span id="label">[[name]]</span>
+<span id="shortcut">[[shortcut]]</span>
+
+<template is="dom-if" if="[[expanded]]">
+  <paper-listbox id="submenu">
+    <template is="dom-repeat" items="[[menus]]">
+      <template is="dom-if" if="[[!item.separator]]">
+        <paper-item disabled$="[[item.disabled]]">
+          <div class="content">
+            <menu-item
+                class="submenu"
+                name="[[item.name]]"
+                shortcut="[[item.shortcut]]"
+                icon="[[item.icon]]"
+                menus="[[item.items]]"
+                actions="[[item.actions]]"
+                disabled="[[item.disabled]]"
+                on-tap="fireActions_"></menu-item>
+            <template is="dom-if" if="[[item.items]]">
+              <iron-icon
+                  icon="arrow-drop-down"
+                  class="rotate-270 submenu-arrow"></iron-icon>
+            </template>
+          </div>
+        </paper-item>
+      </template>
+      <template is="dom-if" if="[[item.separator]]">
+        <paper-item class="no-select">
+          <hr>
+        </paper-item>
+      </template>
+    </template>
+  </paper-listbox>
+</template>

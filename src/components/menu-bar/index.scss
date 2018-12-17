@@ -1,0 +1,66 @@
+#menuBar {
+  line-height: 1.5em;
+  background-color: #eee;
+  display: flex;
+  border-bottom: 1px solid #bbb;
+  user-select: none;
+  
+  menu-item {
+    cursor: pointer;
+    padding: 2px 8px;
+    
+    &:hover {
+      background-color: #ddd;
+    }
+    
+    &.expanded {
+      background-color: white;
+    }
+  }
+}
+
+#iconSlot {
+  margin-left: auto;
+  margin-right: 8px;
+  user-select: none;
+  
+  ::slotted(img) {
+    height: 1.5em;
+    vertical-align: text-top;
+    user-select: none;
+  }
+}
+
+#title {
+  margin: 0 auto;
+  width: 50%;
+  
+  --paper-input-container: {
+    padding: 2px 0 0 0;
+  }
+  
+  --paper-input-container-underline: {
+    display: none;
+  }
+  
+  --paper-input-container-underline-focus: {
+    display: none;
+  }
+  
+  --paper-input-container-label: {
+    font-style: italic;
+  }
+  
+  --paper-input-container-input: {
+    border-radius: 3px;
+    padding: 0 3px;
+  }
+  
+  --paper-input-container-input-focus: {
+    background-color: white;
+    box-shadow:
+        inset 0 1px 2px rgba(0,0,0,.39),
+        0 -1px 1px #44c5c5,
+        0 1px 0 white;
+  }
+}
