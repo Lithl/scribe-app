@@ -38,6 +38,8 @@ other categories. Is there a particular structure you want to use for writing
 your Character details? Create that structure here, and re-use it whenever you
 create a new Character.
 
+Finally, sections of text can be commented on, much like in Google Docs.
+
 ### Saving your Project
 Your Scribe project will be automatically saved in the cloud periodically. You
 can either be an anonymous user, in which case your Project will be associated
@@ -50,6 +52,31 @@ In addition to the cloud saves, you can export your Project data to your Google
 Drive (if you are logged in with your Google account), or download your data as
 a file. In both cases, you can export the entire set of Project data, or just
 export the Manuscript(s).
+
+### Collaboration
+If you sign in with a Google account, you can also specify other Google users
+permitted to collaborate on your Project. There are five permission levels:
+
+1. View: the user can look at what you've written, and nothing more.
+2. Comment: the user can create comments on sections of your text, but cannot
+make changes.
+3. Suggest: the user can suggest changes, but you have to approve them, in
+addition to making comments.
+4. Edit: the user can make edits directly without your permission, as well as
+making suggestions and comments.
+5. Invite: the user can add or remove other users' permissions, in addition to
+the above.
+
+The permissions can be granted to the project as a whole, or limited to just
+some categories (eg, you can let someone only see your Manuscript, not any of
+your other work). You can also give the same person different permissions to
+different parts of the Project (eg, they can Suggest on the Manuscript, but they
+can Edit your Locations).
+
+A user with Invite permissions cannot affect your ability to use your Project,
+nor change their own permissions. If they only have Invite permission on some
+parts of your Project, they can only edit other users' permissions on those
+parts.
 
 ## Deploying Scribe
 If you want to use the code in this repository to deploy an instance of Scribe
