@@ -1,0 +1,35 @@
+<!doctype html>
+<title>Scribe</title>
+<style>
+  body {
+    margin: 0;
+  }
+  
+  #signinWrapper {
+    position: absolute;
+    right: 40px;
+    top: 3px;
+  }
+  
+  #signin,
+  #signout {
+    display: none;
+  }
+  
+  #userIcon {
+    width: 24px;
+    border-radius: 50%;
+  }
+</style>
+<meta name="google-signin-client_id" content="1065221978104-4a14e46o2j5hi1f9g85mou7l3qh7bh1c.apps.googleusercontent.com">
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+<script type="module" src="scribe.lib.js"></script>
+<script type="module" src="scribe.js"></script>
+<div id="signinWrapper">
+  <div id="signin" title="Sign in using Google"></div>
+  <div id="signout" title="Sign out">
+    <a href="#" onclick="signOut()"><img id="userIcon"></a>
+  </div>
+</div>
+<script src="signin.js"></script>
+<scribe-app id="mainApp"></scribe-app>
