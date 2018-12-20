@@ -518,7 +518,7 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   
   @listen('report-bug', document)
   reportBug() {
-    console.log('report a bug');
+    open('https://github.com/Lithl/scribe-app/issues/new?labels=bug,triage&assignee=lithl', 'bug-report');
   }
   
   @listen('request-shortcuts', document)
