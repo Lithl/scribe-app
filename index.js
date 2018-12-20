@@ -2,15 +2,23 @@ const express = require('express');
 
 const app = express();
 
-app.use('/images', express.static('resources/images'));
-app.get('/scribe.js', (req, res) => res.sendFile(`${__dirname}/dist/scribe.js`));
-app.get('/scribe.lib.js', (req, res) => res.sendFile(`${__dirname}/dist/vendors~scribe.js`));
-app.get('/signin.js', (req, res) => res.sendFile(`${__dirname}/signin.js`));
-app.get('/', (req, res) => res.sendFile(`${__dirname}/index.html`));
-app.get('/favicon.ico', (req, res) => res.sendFile(`${__dirname}/favicon.ico`));
+const whitelist = {
+  'scribe.js': 'dist/scribe.js',
+  'scribe.lib.js': 'dist/vendors~scribe.lib.js',
+  'signin.js': '',
+  'root.css': '',
+  'toc.js': '',
+  '': 'index.html',
+  'favicon.ico': '',
+  'privacy': 'privacy.html',
+  'terms': 'terms.html',
+};
 
-app.get('/privacy', (req, res) => res.sendFile(`${__dirname}/privacy.html`));
-app.get('/terms', (req, res) => res.sendFile(`${__dirname}/terms.html`));
+app.use('/images', express.static('resources/images'));
+for (const key in whitelist) {
+  const file = whitelist[key] || key;
+  app.get(`/${key}`, (req, res) => res.sendFile(`${__dirname}/${file}`));
+}
 
 app.listen(3002, () => console.log('Server running on port 3002'));
 
