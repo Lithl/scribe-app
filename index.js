@@ -4,7 +4,7 @@ const app = express();
 
 const whitelist = {
   'scribe.js': 'dist/scribe.js',
-  'scribe.lib.js': 'dist/vendors~scribe.lib.js',
+  'scribe.lib.js': 'dist/vendors~scribe.js',
   'signin.js': '',
   'root.css': '',
   'toc.js': '',
