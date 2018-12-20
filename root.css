@@ -1,0 +1,27 @@
+/* common */
+body {
+  margin: 0;
+}
+
+/* index */
+#signinWrapper {
+  position: absolute;
+  right: 40px;
+  top: 3px;
+}
+
+#signin,
+#signout {
+  display: none;
+}
+
+#userIcon {
+  width: 24px;
+  border-radius: 50%;
+}
+
+/* terms, privacy */
+body#legal {
+  margin: 8px;
+  font-family: Roboto, Arial, sans-serif;
+}
