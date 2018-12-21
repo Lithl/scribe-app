@@ -10,7 +10,7 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import {customElement, property} from '@polymer/decorators';
+import {customElement, property, query} from '@polymer/decorators';
 
 import * as template from './node-template.html';
 import {PaperTree} from './';
@@ -45,6 +45,9 @@ export class TreeNode extends PolymerElement {
   @property({computed: 'computeIcon_(data.icon)', type: String})
   protected icon_ = '';
   
+  @query('.node-container')
+  protected nodeContainer_!: HTMLDivElement;
+
   ready() {
     super.ready();
     const names = [...this.shadowRoot!.querySelectorAll('.node-name')];
@@ -64,6 +67,11 @@ export class TreeNode extends PolymerElement {
         }
       });
     });
+
+    this.nodeContainer_!.addEventListener('dragstart', (e: DragEvent) => this.nodeDragStart_(e));
+    this.nodeContainer_!.addEventListener('dragenter', (e: DragEvent) => this.nodeDragEnter_(e));
+    this.nodeContainer_!.addEventListener('dragover', (e: DragEvent) => this.nodeDragOver_(e));
+    this.nodeContainer_!.addEventListener('drop', (e: DragEvent) => this.nodeDrop_(e));
   }
   
   protected computeNodeClasses_(changed: {base: TreeNodeData}) {
@@ -125,5 +133,91 @@ export class TreeNode extends PolymerElement {
       composed: true,
       detail: this,
     })));
+  }
+
+  private nodeDragStart_(e: DragEvent) {
+    e.stopPropagation();
+
+    const parent = this.getParentNode();
+    if (!parent) return;
+
+    const dropTargets: Array<string> = [];
+    if (parent instanceof PaperTree) {
+      // node is Ideas, Manuscript, Characters, Locations, Notes, Research,
+      // or Templates
+      dropTargets.push('root');
+    } else {
+      const parentIcon = parent.computeIcon_();
+
+      if (parentIcon === 'lightbulb-outline' // node is Ideas leaf node
+          || parentIcon === 'face' // node is Characters leaf node
+          || parentIcon === 'maps:satellite' // node is Locations leaf node
+          || parentIcon === 'av:note' // node is Notes leaf node
+          || parentIcon === 'work' // node is Research leaf node
+          || parentIcon === 'device:widgets') { // node is Templates leaf node
+        dropTargets.push(parentIcon);
+      } else {
+        // node is descendant of Manuscripts node
+        dropTargets.push('chrome-reader-mode');
+        if (parentIcon === 'book') {
+          // node is a Scene
+          dropTargets.push('book');
+        }
+      }
+    }
+
+    e.dataTransfer!.setData('text/plain', JSON.stringify({
+      transfer: 'tree-node',
+      dropTargets,
+    }));
+    dropTargets.forEach((t) => e.dataTransfer!.setData(t, 'dummy'));
+  }
+
+  private nodeDragEnter_(e: DragEvent) {
+    e.stopPropagation();
+    let canMove = false;
+
+    const parent = this.getParentNode();
+    if (!parent || parent instanceof PaperTree) return;
+
+    const types = e.dataTransfer!.types;
+    const icon = this.computeIcon_();
+    const parentIcon = parent.computeIcon_();
+    if (icon === 'lightbulb-outline' // node is Ideas
+        || icon === 'chrome-reader-mode' // node is Manuscript
+        || icon === 'face' // node is Characters
+        || icon === 'maps:satellite' // node is Locations
+        || icon === 'av:note' // node is Notes
+        || icon === 'work' // node is Research
+        || icon === 'device:widgets') { // node is Templates
+      if (types.indexOf('root') >= 0) {
+        // dragging one of the root node types onto the root
+        canMove = true;
+      }
+
+      if (icon === 'chrome-reader-mode') {
+        if (types.indexOf('chrome-reader-mode') >= 0 // dragging a Chapter
+            || types.indexOf('book') >= 0) { // dragging a Scene
+          // dragging a descendant of a Manuscript onto a Manuscript
+          canMove = true;
+        }
+      }
+    } else if (icon === 'book' && types.indexOf('book') >= 0) {
+      // dragging a Scene onto a Chapter
+      canMove = true;
+    }
+
+    if (canMove || types.indexOf(`${parentIcon}`) >= 0) {
+      e.preventDefault();
+    }
+  }
+
+  private nodeDragOver_(e: DragEvent) {
+    this.nodeDragEnter_(e);
+  }
+
+  private nodeDrop_(e: DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
