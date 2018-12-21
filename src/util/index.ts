@@ -60,6 +60,11 @@ function ordinalSuffix(num: number) {
   return 'th';
 }
 
+/**
+ * Converts a number into a suffixed string
+ * @param num the number to convert
+ * @returns `num` with a suffix, eg "21st", "2nd", and so on
+ */
 export function nth(num: number) {
   const n = Math.floor(num);
   const suffix = ordinalSuffix(n);

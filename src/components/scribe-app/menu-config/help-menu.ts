@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Exports the "Help" menu and its submenus/menu items
+ */
 import {MenuDescription} from '../../menu-bar/menu-item';
 
 export const helpMenu_aboutScribe = {

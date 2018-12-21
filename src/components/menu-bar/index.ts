@@ -5,7 +5,7 @@ import {customElement, listen, observe, property, query} from '@polymer/decorato
 import {DeclarativeEventListeners} from '@polymer/decorators/lib/declarative-event-listeners';
 
 import './menu-item';
-import {MenuItem, MenuDescription as Description} from './menu-item';
+import {MenuItem, MenuDescription as Description, MenuChangeRecord} from './menu-item';
 
 import * as template from './template.html';
 
@@ -14,6 +14,9 @@ import './index.scss?name=menu-bar';
 
 export interface MenuDescription extends Description {}
 
+/**
+ * A container for menus, submenus, and menu items like a fully-fleged window
+ */
 @customElement('menu-bar')
 export class MenuBar extends DeclarativeEventListeners(PolymerElement) {
   static get template() {
@@ -43,7 +46,7 @@ export class MenuBar extends DeclarativeEventListeners(PolymerElement) {
   }
   
   @observe('menus.*')
-  protected menusChanged_(changeRecord: {base: Array<MenuDescription>, path: string, value: MenuDescription}) {
+  protected menusChanged_(changeRecord: MenuChangeRecord) {
     const match = changeRecord.path.match(/^menus\.(\d+)/);
     if (!match) return;
     const idx = parseInt(match[1], 10);

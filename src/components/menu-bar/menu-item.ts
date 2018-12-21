@@ -9,7 +9,7 @@ import {PaperListboxElement} from '@polymer/paper-listbox';
 import '@polymer/paper-item';
 
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import {customElement, observe, property} from '@polymer/decorators';
+import {customElement, observe, property, query} from '@polymer/decorators';
 import {GestureEventListeners} from '@polymer/polymer/lib/mixins/gesture-event-listeners';
 
 import '../fim-iconset';
@@ -29,6 +29,15 @@ export interface MenuDescription {
   disabled?: boolean,
 }
 
+export interface MenuChangeRecord {
+  base: Array<MenuDescription>,
+  path: string,
+  value: MenuDescription,
+}
+
+/**
+ * A submenu or menu item in a menu bar
+ */
 @customElement('menu-item')
 export class MenuItem extends GestureEventListeners(PolymerElement) {
   static get template() {
@@ -60,15 +69,16 @@ export class MenuItem extends GestureEventListeners(PolymerElement) {
   @property({type: Boolean})
   hideIcon = false;
   
+  @query('#submenu')
+  protected submenu_!: PaperListboxElement;
+  
   @observe('menus.*')
-  protected menusChanged_(changeRecord: {base: Array<MenuDescription>, path: string, value: MenuDescription}) {
+  protected menusChanged_(changeRecord: MenuChangeRecord) {
     let path = changeRecord.path;
     const match = path.match(/^menus\.(\d+)/);
     if (!match) return;
     const idx = parseInt(match[1], 10);
-    const submenu = this.shadowRoot!.querySelector('#submenu') as PaperListboxElement;
-    if (!submenu) return;
-    const items = submenu.querySelectorAll('paper-item');
+    const items = this.submenu_.querySelectorAll('paper-item');
     if (!items) return;
     const content = items[idx].querySelector('div');
     if (!content) return;

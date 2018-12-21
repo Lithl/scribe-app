@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Exports the "Format" menu and its submenus/menu items
+ */
 import {MenuDescription} from '../../menu-bar/menu-item';
 
 export const formatMenu_text_bold = {

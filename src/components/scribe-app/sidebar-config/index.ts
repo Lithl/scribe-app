@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Exports the initial sidebar structure
+ */
 import {TreeNodeData} from '../../paper-tree/node';
 import {deepCopy} from '../../../util';
 

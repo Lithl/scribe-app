@@ -20,6 +20,12 @@ import {nth} from '../../util';
 import '../../common.scss?name=common';
 import './index.scss?name=main';
 
+/**
+ * Main app; much of the state will be stored here, and the only element of the
+ * page the user interactis with that isn't a child of this component should be
+ * the signin/signout button for Google accounts (the loader doesn't handle
+ * being in a shadow root well)
+ */
 @customElement('scribe-app')
 export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   static get template() {
@@ -111,7 +117,11 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
    * @param childName the name to give to the newly-created child of the root
    * node
    */
-  private rootNodeInsertionHelper(name: string, matchIcon: string, childName: string, child?: TreeNodeData) {
+  private rootNodeInsertionHelper(
+      name: string,
+      matchIcon: string,
+      childName: string,
+      child?: TreeNodeData) {
     if (!this.tree_) {
       throw new Error('Cannot insert nodes before tree is initialized');
     }
@@ -190,6 +200,11 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
     this.rootNodeInsertionHelper('Ideas', 'lightbulb-outline', 'Empty idea');
   }
   
+  /**
+   * The user clicked one of the tree-nodes (including non-selectable nodes). We
+   * mark which one it was so we can guess which Manuscript/Chapter the user
+   * meant to add a new Scene to
+   */
   @listen('select', document)
   treeItemSelected(e: Event) {
     const treeNode = (e as CustomEvent).detail as TreeNode;
@@ -198,6 +213,7 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   
   @listen('new-chapter', document)
   newChapter() {
+    // TODO: remove duplicated code in this function
     const newChapter = {
       open: true,
       children: [{
@@ -307,6 +323,7 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   
   @listen('new-template', document)
   newTemplate() {
+    // TODO: allow user to pick a Template when creating a new leaf node
     this.rootNodeInsertionHelper(
         'Templates',
         'device:widgets',
@@ -477,6 +494,10 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   @listen('heading-6', document)
   heading6() { this.heading_(6); }
   
+  /**
+   * Generalized function for setting the heading level, since the only
+   * difference is which hN tag gets used.
+   */
   private heading_(level: number) {
     console.log(`set to heading level ${level}`);
   }
@@ -518,7 +539,9 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   
   @listen('report-bug', document)
   reportBug() {
-    open('https://github.com/Lithl/scribe-app/issues/new?labels=bug,triage&assignee=lithl', 'bug-report');
+    open(
+        'https://github.com/Lithl/scribe-app/issues/new?labels=bug,triage&assignee=lithl',
+        'bug-report');
   }
   
   @listen('request-shortcuts', document)
@@ -526,11 +549,14 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
     console.log('request keyboard shortcuts');
   }
   
+  /**
+   * User logged in or out of their Google account; enable/disable the Google
+   * Drive export menu item
+   */
   @observe('googleUser')
   protected googleUserChanged(user: gapi.auth2.GoogleUser) {
     googleDrive.disabled = !(user && user.isSignedIn());
-    let path = 'menus';
-    path += '.0.items'; // fileMenu
+    let path = 'menus.0.items';  // fileMenu
     let submenu;
     for (let i = 0; i < fileMenu.items!.length; i++) {
       submenu = fileMenu.items![i];

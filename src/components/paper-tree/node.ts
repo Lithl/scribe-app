@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Typescript/Polymer3 implementation of
+ * https://www.webcomponents.org/element/vpusher/paper-tree
+ */
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/paper-menu-button/paper-menu-button';

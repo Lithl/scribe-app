@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Typescript/Polymer3 implementation of
+ * https://www.webcomponents.org/element/vpusher/paper-tree
+ */
 import {PaperListboxElement} from '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 
@@ -17,6 +21,9 @@ if (typeof TreeNode === 'string') {
   // nop; fixes strange issue with tree-node not importing correctly after build
 }
 
+/**
+ * Milliseconds to show/hide the context menu
+ */
 const CONTEXT_DELAY = 200;
 
 interface ContextCallback {

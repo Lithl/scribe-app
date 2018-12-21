@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @fileoverview Exports the object structures for the initial scribe-app menu
+ */
 var file_menu_1 = require("./file-menu");
 exports.fileMenu = file_menu_1.fileMenu;
 var edit_menu_1 = require("./edit-menu");

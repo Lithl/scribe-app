@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Exports the "File" menu and its submenus/menu items
+ */
 import {MenuDescription} from '../../menu-bar/menu-item';
 
 export const fileMenu_new_project = {

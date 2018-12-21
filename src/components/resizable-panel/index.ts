@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Typescript/Polymer3 implementation of
+ * https://www.webcomponents.org/element/kcmr/resizable-panels
+ */
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 import {computed, customElement, observe, property} from '@polymer/decorators';
 import {GestureEventListeners} from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
