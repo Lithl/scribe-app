@@ -76,6 +76,10 @@ export class TreeNode extends PolymerElement {
         'dragover', (e: DragEvent) => this.nodeDragOver_(e));
     this.nodeContainer_!.addEventListener(
         'drop', (e: DragEvent) => this.nodeDrop_(e));
+    this.nodeContainer_!.addEventListener(
+        'dragend', () => this.nodeDragCleanup_());
+    this.nodeContainer_!.addEventListener(
+        'dragleave', () => this.nodeDragCleanup_());
   }
   
   protected computeNodeClasses_(changed: {base: TreeNodeData}) {
@@ -126,8 +130,21 @@ export class TreeNode extends PolymerElement {
     return parent as TreeNode|PaperTree;
   }
   
+  private getParentTree_() {
+    let root: (Node & ParentNode) | null = this;
+    while (root && !(root instanceof PaperTree)) {
+      if ((root as any).host) {
+        root = (root as any).host;
+      } else {
+        root = root.parentNode;
+      }
+    }
+    return root;
+  }
+  
   getChildren() {
-    return [...this.shadowRoot!.querySelectorAll('tree-node')];
+    return [...this.shadowRoot!.querySelectorAll('tree-node')]
+        .map((e) => e as TreeNode);
   }
   
   toggleChildren() {
@@ -184,11 +201,11 @@ export class TreeNode extends PolymerElement {
     let canMove = false;
 
     const parent = this.getParentNode();
-    if (!parent || parent instanceof PaperTree) return;
+    if (!parent) return; // this instanceof PaperTree
 
     const types = e.dataTransfer!.types;
     const icon = this.computeIcon_();
-    const parentIcon = parent.computeIcon_();
+    const parentIcon = parent instanceof PaperTree ? '' : parent.computeIcon_();
     if (icon === 'lightbulb-outline' // node is Ideas
         || icon === 'chrome-reader-mode' // node is Manuscript
         || icon === 'face' // node is Characters
@@ -215,15 +232,75 @@ export class TreeNode extends PolymerElement {
 
     if (canMove || types.indexOf(`${parentIcon}`) >= 0) {
       e.preventDefault();
+      return true;
     }
+    return false;
   }
 
   private nodeDragOver_(e: DragEvent) {
-    this.nodeDragEnter_(e);
+    const canMove = this.nodeDragEnter_(e);
+    if (!canMove) return;
+
+    const path = e.composedPath();
+    const overNode = path.find((n) => (n as Node).nodeName === 'TREE-NODE') as TreeNode;
+    if (!overNode) return; // not over any tree-node
+
+    const nodeY = overNode.nodeContainer_.offsetTop;
+    const nodeHeight = overNode.nodeContainer_.clientHeight;
+    const mouseY = e.y;
+
+    if (mouseY < nodeY + nodeHeight / 2) {
+      overNode.classList.remove('insert-below');
+      overNode.classList.add('insert-above');
+    } else {
+      overNode.classList.remove('insert-above');
+      overNode.classList.add('insert-below');
+    }
   }
 
   private nodeDrop_(e: DragEvent) {
     e.preventDefault();
     e.stopPropagation();
+
+    const data = JSON.parse(e.dataTransfer!.getData('text/plain'));
+    if (data.transfer !== 'tree-node') return;
+
+    console.dir(this);
+
+    const nodeY = this.nodeContainer_.offsetTop;
+    const nodeHeight = this.nodeContainer_.clientHeight;
+    const mouseY = e.y;
+
+    if (mouseY < nodeY + nodeHeight / 2) {
+      console.log('insert above');
+    } else {
+      console.log('insert below');
+    }
+    console.log(data, e);
+  }
+  
+  private nodeDragCleanup_() {
+    this.clearAllInsertClasses_();
+  }
+  
+  private clearAllInsertClasses_() {
+    const root = this.getParentTree_();
+    if (root) {
+      const children = [...root.shadowRoot!.querySelectorAll('tree-node')]
+          .map((e) => e as TreeNode);
+      children.forEach((c) => TreeNode.clearInsertClassesOf_(c));
+    } else {
+      TreeNode.clearInsertClassesOf_(this);
+    }
+  }
+
+  private static clearInsertClassesOf_(root: TreeNode) {
+    const children = root.getChildren();
+    if (children && children.length) {
+      children.forEach((c) => TreeNode.clearInsertClassesOf_(c));
+    }
+    
+    root.classList.remove('insert-above');
+    root.classList.remove('insert-below');
   }
 }

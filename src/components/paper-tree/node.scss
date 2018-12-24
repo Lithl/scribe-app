@@ -7,6 +7,14 @@
   }
 }
 
+:host(.insert-above) > .node-container {
+  border-top: 3px solid blue;
+}
+
+:host(.insert-below) > .node-container {
+  border-bottom: 3px solid blue;
+}
+
 .node-container {
   white-space: nowrap;
   user-select: none;
