@@ -68,10 +68,14 @@ export class TreeNode extends PolymerElement {
       });
     });
 
-    this.nodeContainer_!.addEventListener('dragstart', (e: DragEvent) => this.nodeDragStart_(e));
-    this.nodeContainer_!.addEventListener('dragenter', (e: DragEvent) => this.nodeDragEnter_(e));
-    this.nodeContainer_!.addEventListener('dragover', (e: DragEvent) => this.nodeDragOver_(e));
-    this.nodeContainer_!.addEventListener('drop', (e: DragEvent) => this.nodeDrop_(e));
+    this.nodeContainer_!.addEventListener(
+        'dragstart', (e: DragEvent) => this.nodeDragStart_(e));
+    this.nodeContainer_!.addEventListener(
+        'dragenter', (e: DragEvent) => this.nodeDragEnter_(e));
+    this.nodeContainer_!.addEventListener(
+        'dragover', (e: DragEvent) => this.nodeDragOver_(e));
+    this.nodeContainer_!.addEventListener(
+        'drop', (e: DragEvent) => this.nodeDrop_(e));
   }
   
   protected computeNodeClasses_(changed: {base: TreeNodeData}) {
@@ -127,7 +131,9 @@ export class TreeNode extends PolymerElement {
   }
   
   toggleChildren() {
-    this.set('data.open', !this.data.open && this.data.children && this.data.children.length);
+    this.set(
+        'data.open',
+        !this.data.open && this.data.children && this.data.children.length);
     setTimeout(() => this.dispatchEvent(new CustomEvent('toggle', {
       bubbles: true,
       composed: true,
