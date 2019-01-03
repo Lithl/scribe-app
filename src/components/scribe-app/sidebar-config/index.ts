@@ -1,62 +1,22 @@
 /**
  * @fileoverview Exports the initial sidebar structure
  */
-import {TreeNodeData} from '../../paper-tree/node';
+import {RootNodeData, ParentNodeData, LeafNodeData} from '../../paper-tree/node';
 import {deepCopy} from '../../../util';
 
 export const emptyProject = [
-  {
-    open: true,
-    children: [],
-    icon: 'lightbulb-outline',
-    name: 'Ideas',
-  },
-  {
-    open: true,
-    children: [{
-      open: true,
-      children: [{
-        selectable: true,
-        icon: 'device:wallpaper',
-        name: 'New scene',
-      }],
-      icon: 'book',
-      name: '1st chapter',
-    }],
-    icon: 'chrome-reader-mode',
-    name: 'Manuscript',
-  },
-  {
-    open: true,
-    children: [],
-    icon: 'face',
-    name: 'Characters',
-  },
-  {
-    open: true,
-    children: [],
-    icon: 'maps:satellite',
-    name: 'Locations',
-  },
-  {
-    open: true,
-    children: [],
-    icon: 'av:note',
-    name: 'Notes',
-  },
-  {
-    open: true,
-    children: [],
-    icon: 'work',
-    name: 'Research',
-  },
-  {
-    open: true,
-    children: [],
-    icon: 'device:widgets',
-    name: 'Templates',
-  },
-] as Array<TreeNodeData>;
+  new RootNodeData('lightbulb-outline', 'Ideas'),
+  new RootNodeData('chrome-reader-mode', 'Manuscript', [
+    new ParentNodeData('1st chapter', [
+      new LeafNodeData('New scene', 'device:wallpaper'),
+    ]),
+  ]),
+  new RootNodeData('face', 'Characters'),
+  new RootNodeData('maps:satellite', 'Locations'),
+  new RootNodeData('av:note', 'Notes'),
+  new RootNodeData('work', 'Research'),
+  new RootNodeData('device:widgets', 'Templates'),
+];
 
 export function generateProject() {
   return deepCopy(emptyProject);

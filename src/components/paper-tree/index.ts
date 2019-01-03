@@ -9,17 +9,18 @@ import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 import {customElement, listen, property, query} from '@polymer/decorators';
 import {DeclarativeEventListeners} from '@polymer/decorators/lib/declarative-event-listeners.js';
 
-import {TreeNode, TreeNodeData as NodeData} from './node';
+import {TreeNode, TreeNodeData, RootIconType, RootNodeData, ParentNodeData, LeafNodeData} from './node';
+export {TreeNode, TreeNodeData, RootIconType, RootNodeData, ParentNodeData, LeafNodeData};
 
 import * as template from './template.html';
 
 import '../../common.scss?name=common';
 import './index.scss?name=tree';
 
-export interface TreeNodeData extends NodeData {};
-if (typeof TreeNode === 'string') {
-  // nop; fixes strange issue with tree-node not importing correctly after build
-}
+
+// if (typeof TreeNode === 'string') {
+//   // nop; fixes strange issue with tree-node not importing correctly after build
+// }
 
 /**
  * Milliseconds to show/hide the context menu
@@ -38,7 +39,7 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
   }
   
   @property()
-  data!: Array<TreeNodeData>;
+  data!: Array<RootNodeData>;
   
   @property({type: Object, notify: true})
   selected: HTMLElement|null = null;

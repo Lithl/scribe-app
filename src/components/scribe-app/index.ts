@@ -3,8 +3,7 @@ import {customElement, listen, observe, property, query} from '@polymer/decorato
 import {DeclarativeEventListeners} from '@polymer/decorators/lib/declarative-event-listeners';
 import {DomRepeat} from '@polymer/polymer/lib/elements/dom-repeat';
 
-import {PaperTree, TreeNodeData} from '../paper-tree';
-import {TreeNode} from '../paper-tree/node';
+import {PaperTree, TreeNode, RootIconType, RootNodeData, ParentNodeData, LeafNodeData} from '../paper-tree';
 import {MenuBar} from '../menu-bar';
 import '../resizable-panel';
 
@@ -119,13 +118,13 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
    */
   private rootNodeInsertionHelper(
       name: string,
-      matchIcon: string,
+      matchIcon: RootIconType,
       childName: string,
-      child?: TreeNodeData) {
+      child?: ParentNodeData | LeafNodeData) {
     if (!this.tree_) {
       throw new Error('Cannot insert nodes before tree is initialized');
     }
-    let node: TreeNodeData|null = null;
+    let node: RootNodeData|null = null;
     const data = this.tree_.data;
     let i = 0;
     for (; i < data.length; i++) {
@@ -135,21 +134,13 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
       }
     }
     if (node === null) {
-      node = {
-        open: true,
-        children: [],
-        icon: matchIcon,
-        name: name,
-      };
+      node = new RootNodeData(matchIcon, name);
       data.push(node);
       this.tree_.data = data.slice();
     }
     
     if (!child) {
-      child = {
-        selectable: true,
-        name: childName,
-      };
+      child = new LeafNodeData(childName);
     }
     node.children!.push(child);
     // force +/- to display when first child is added
@@ -169,21 +160,11 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
       }
     }
     
-    const newManuscript = {
-      open: true,
-      children: [{
-        open: true,
-        children: [{
-          selectable: true,
-          icon: 'device:wallpaper',
-          name: 'New scene',
-        }],
-        icon: 'book',
-        name: '1st chapter',
-      }],
-      icon: 'chrome-reader-mode',
-      name: 'Manuscript',
-    };
+    const newManuscript = new RootNodeData('chrome-reader-mode', 'Manuscript', [
+      new ParentNodeData('1st chapter', [
+        new LeafNodeData('New scene', 'device:wallpaper'),
+      ]),
+    ]);
     if (i < 0) {
       data.push(newManuscript);
       i = data.length - 1;
@@ -214,16 +195,10 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   @listen('new-chapter', document)
   newChapter() {
     // TODO: remove duplicated code in this function
-    const newChapter = {
-      open: true,
-      children: [{
-        selectable: true,
-        icon: 'device:wallpaper',
-        name: 'New scene',
-      }],
-      icon: 'book',
-      get name() { return `${nth(length + 1)} chapter`; },
-    };
+    const newChapter = (len: number) =>
+        new ParentNodeData(`${nth(len + 1)} chapter`, [
+          new LeafNodeData('New scene', 'device:wallpaper')
+        ]);
     let length = 0;
     if (!this.lastSelectedNode_) {
       // we haven't clicked any nodes, add the chapter to the first manuscript
@@ -235,13 +210,13 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
           'Manuscript',
           'chrome-reader-mode',
           'Untitled chapter',
-          newChapter);
+          newChapter(length));
     } else {
       const icon = this.lastSelectedNode_.data.icon;
       if (icon === 'chrome-reader-mode') {
         // last clicked node was a manuscript, add chapter to that one
         length = this.lastSelectedNode_.data.children!.length;
-        this.lastSelectedNode_.data.children!.push(newChapter);
+        this.lastSelectedNode_.data.children!.push(newChapter(length));
         this.nodeRenderHelper('chrome-reader-mode', false);
       } else if (icon === 'book') {
         // last clicked node was chapter, add chapter after that one
@@ -252,7 +227,7 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
         const idx = parent.data.children!.indexOf(this.lastSelectedNode_.data);
         length = parent.data.children!.length;
         if (idx >= 0) {
-          parent.data.children!.splice(idx + 1, 0, newChapter);
+          parent.data.children!.splice(idx + 1, 0, newChapter(length));
         } else {
           throw new Error('Invalid tree state: chapter node not in parent children');
         }
@@ -270,7 +245,7 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
         const idx = grandparent.data.children!.indexOf(parent.data);
         length = grandparent.data.children!.length;
         if (idx >= 0) {
-          grandparent.data.children!.splice(idx + 1, 0, newChapter);
+          grandparent.data.children!.splice(idx + 1, 0, newChapter(length));
         } else {
           throw new Error('Invalid tree state: chapter node not in parent children');
         }
@@ -287,10 +262,9 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
             'Manuscript',
             'chrome-reader-mode',
             'Untitled chapter',
-            newChapter);
+            newChapter(length));
       }
     }
-    console.log('create new chapter');
   }
   
   @listen('new-scene', document)

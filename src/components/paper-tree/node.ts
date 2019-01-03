@@ -19,12 +19,55 @@ import '../../common.scss?name=common';
 import './node.scss?name=tree-node'
 
 export interface TreeNodeData {
-  open?: boolean,
+  open: boolean,
   children?: Array<TreeNodeData>,
   icon?: string,
-  selectable?: boolean,
+  selectable: boolean,
   name: string,
 }
+
+export type RootIconType = 'lightbulb-outline' | 'face' | 'maps:satellite' | 'av:note'
+      | 'work' | 'device:widgets' | 'chrome-reader-mode';
+
+export class RootNodeData implements TreeNodeData {
+  readonly open = true;
+  children: Array<ParentNodeData | LeafNodeData> = [];
+  icon: RootIconType;
+  readonly selectable = false;
+  name = '';
+  
+  constructor(icon: RootIconType, name: string, children?: Array<ParentNodeData | LeafNodeData>) {
+    this.icon = icon;
+    this.name = name;
+    this.children = children || [];
+  }
+}
+
+export class ParentNodeData implements TreeNodeData {
+  readonly open = true;
+  children: Array<LeafNodeData> = [];
+  icon = 'book';
+  readonly selectable = false;
+  name = '';
+  
+  constructor(name: string, children?: Array<LeafNodeData>) {
+    this.name = name;
+    this.children = children || [];
+  }
+}
+
+export class LeafNodeData implements TreeNodeData {
+  open = true;
+  icon: 'device:wallpaper' | undefined;
+  readonly selectable = true;
+  name = '';
+  
+  constructor(name: string, icon?: 'device:wallpaper') {
+    this.icon = icon;
+    this.name = name;
+  }
+}
+
 
 @customElement('tree-node')
 export class TreeNode extends PolymerElement {
