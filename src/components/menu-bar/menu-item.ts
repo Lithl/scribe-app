@@ -74,6 +74,7 @@ export class MenuItem extends GestureEventListeners(PolymerElement) {
   
   @observe('menus.*')
   protected menusChanged_(changeRecord: MenuChangeRecord) {
+    if (!this.submenu_) return;
     let path = changeRecord.path;
     const match = path.match(/^menus\.(\d+)/);
     if (!match) return;
