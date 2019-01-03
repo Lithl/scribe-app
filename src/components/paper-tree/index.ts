@@ -17,11 +17,6 @@ import * as template from './template.html';
 import '../../common.scss?name=common';
 import './index.scss?name=tree';
 
-
-// if (typeof TreeNode === 'string') {
-//   // nop; fixes strange issue with tree-node not importing correctly after build
-// }
-
 /**
  * Milliseconds to show/hide the context menu
  */
