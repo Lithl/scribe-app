@@ -11,9 +11,12 @@ import '@polymer/paper-item/paper-item';
 
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 import {customElement, property, query} from '@polymer/decorators';
+import {DomRepeat} from '@polymer/polymer/lib/elements/dom-repeat';
 
 import * as template from './node-template.html';
 import {PaperTree} from './';
+
+import {uuid} from '../../util';
 
 import '../../common.scss?name=common';
 import './node.scss?name=tree-node'
@@ -90,6 +93,8 @@ export class TreeNode extends PolymerElement {
   
   @query('.node-container')
   protected nodeContainer_!: HTMLDivElement;
+  
+  private uuid_ = uuid();
 
   ready() {
     super.ready();
@@ -120,9 +125,9 @@ export class TreeNode extends PolymerElement {
     this.nodeContainer_!.addEventListener(
         'drop', (e: DragEvent) => this.nodeDrop_(e));
     this.nodeContainer_!.addEventListener(
-        'dragend', () => this.nodeDragCleanup_());
+        'dragend', () => this.clearAllInsertClasses_());
     this.nodeContainer_!.addEventListener(
-        'dragleave', () => this.nodeDragCleanup_());
+        'dragleave', () => this.clearAllInsertClasses_());
   }
   
   protected computeNodeClasses_(changed: {base: TreeNodeData}) {
@@ -231,10 +236,20 @@ export class TreeNode extends PolymerElement {
         }
       }
     }
+    
+    const uuidChain = [this.uuid_];
+    let anscestor: PaperTree | TreeNode | null | undefined = parent;
+    if (anscestor instanceof TreeNode) {
+      uuidChain.unshift(anscestor.uuid_);
+      while (anscestor = anscestor instanceof TreeNode ? anscestor.getParentNode() : null) {
+        if (anscestor instanceof TreeNode) uuidChain.unshift(anscestor.uuid_);
+      }
+    }
 
     e.dataTransfer!.setData('text/plain', JSON.stringify({
       transfer: 'tree-node',
       dropTargets,
+      uuidChain,
     }));
     dropTargets.forEach((t) => e.dataTransfer!.setData(t, 'dummy'));
   }
@@ -304,25 +319,83 @@ export class TreeNode extends PolymerElement {
   private nodeDrop_(e: DragEvent) {
     e.preventDefault();
     e.stopPropagation();
+    
+    const forceRender = (root: TreeNode) => {
+      if (!root.shadowRoot) return;
+      const domRepeat = root.shadowRoot.querySelector('dom-repeat');
+      (domRepeat as DomRepeat).render();
+    }
 
     const data = JSON.parse(e.dataTransfer!.getData('text/plain'));
     if (data.transfer !== 'tree-node') return;
-
-    console.dir(this);
-
+    
     const nodeY = this.nodeContainer_.offsetTop;
     const nodeHeight = this.nodeContainer_.clientHeight;
     const mouseY = e.y;
-
-    if (mouseY < nodeY + nodeHeight / 2) {
-      console.log('insert above');
-    } else {
-      console.log('insert below');
+    const insertAbove = mouseY < nodeY + nodeHeight / 2;
+    
+    const tree = this.getParentTree_();
+    const chain = data.uuidChain.slice();
+    let sourceParent: TreeNode | undefined;
+    while (chain.length > 1) {
+      const id = chain.shift();
+      const children = sourceParent ?
+          sourceParent.getChildren()
+          : [...tree!.shadowRoot!.querySelectorAll('tree-node')]
+              .map((e) => e as TreeNode);
+      sourceParent = children.find((c) => c.uuid_ === id);
     }
-    console.log(data, e);
-  }
-  
-  private nodeDragCleanup_() {
+    if (!sourceParent || !sourceParent.data.children) return;
+    
+    const sourceUuid = data.uuidChain[data.uuidChain.length - 1];
+    const idx = sourceParent.getChildren()
+        .findIndex((c) => c.uuid_ === sourceUuid);
+    const spliced = sourceParent.data.children.splice(idx, 1);
+    if (spliced.length !== 1) return;
+    const transferredData = spliced[0];
+    sourceParent.notifyPath('data.children', sourceParent.data.children);
+    forceRender(sourceParent);
+    
+    let insertParent;
+    let insertIdx;
+    if (data.dropTargets.indexOf(this.icon_) >= 0
+        && transferredData.icon === 'device:wallpaper'
+        && this.icon_ === 'chrome-reader-mode') {
+      // dropped scene node into manuscript; append to first chapter, or
+      // create new chapter if none exist
+      if (!this.data.children || !this.data.children.length) {
+        this.data.children = [new ParentNodeData('1st chapter')];
+        forceRender(this);
+      }
+      insertParent = this.getChildren()![0];
+      insertIdx = -1;
+    } else {
+      // dropped non-scene node, or dropped scene node into chapter; append to
+      // drop target if it's a parent/root node, or insert above/below drop
+      // target otherwise
+      if (data.dropTargets.indexOf(this.icon_) >= 0) {
+        insertParent = this;
+        insertIdx = -1;
+      } else {
+        insertParent = this.getParentNode();
+        if (!insertParent || insertParent instanceof PaperTree) return;
+        else {
+          insertIdx = insertParent.getChildren()
+              .findIndex((e) => e.uuid_ === this.uuid_);
+        }
+      }
+    }
+
+    if (!insertParent.data.children) insertParent.data.children = [];
+    if (insertIdx < 0) {
+      insertParent.data.children.push(transferredData);
+    } else {
+      if (!insertAbove) insertIdx++;
+      insertParent.data.children.splice(insertIdx, 0, transferredData);
+    }
+    insertParent.notifyPath('data.children', insertParent.data.children);
+    forceRender(insertParent);
+    
     this.clearAllInsertClasses_();
   }
   
