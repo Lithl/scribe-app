@@ -158,4 +158,3 @@ export class MenuItem extends GestureEventListeners(PolymerElement) {
     submenu.style.top = '5px';
   }
 }
-

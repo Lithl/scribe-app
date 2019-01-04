@@ -29,8 +29,8 @@ export interface TreeNodeData {
   name: string,
 }
 
-export type RootIconType = 'lightbulb-outline' | 'face' | 'maps:satellite' | 'av:note'
-      | 'work' | 'device:widgets' | 'chrome-reader-mode';
+export type RootIconType = 'lightbulb-outline' | 'face' | 'maps:satellite'
+      | 'av:note' | 'work' | 'device:widgets' | 'chrome-reader-mode';
 
 export class RootNodeData implements TreeNodeData {
   readonly open = true;
@@ -39,7 +39,10 @@ export class RootNodeData implements TreeNodeData {
   readonly selectable = false;
   name = '';
   
-  constructor(icon: RootIconType, name: string, children?: Array<ParentNodeData | LeafNodeData>) {
+  constructor(
+      icon: RootIconType,
+      name: string,
+      children?: Array<ParentNodeData | LeafNodeData>) {
     this.icon = icon;
     this.name = name;
     this.children = children || [];
@@ -241,7 +244,8 @@ export class TreeNode extends PolymerElement {
     let anscestor: PaperTree | TreeNode | null | undefined = parent;
     if (anscestor instanceof TreeNode) {
       uuidChain.unshift(anscestor.uuid_);
-      while (anscestor = anscestor instanceof TreeNode ? anscestor.getParentNode() : null) {
+      while (anscestor = anscestor instanceof TreeNode
+          ? anscestor.getParentNode() : null) {
         if (anscestor instanceof TreeNode) uuidChain.unshift(anscestor.uuid_);
       }
     }
@@ -300,7 +304,8 @@ export class TreeNode extends PolymerElement {
     if (!canMove) return;
 
     const path = e.composedPath();
-    const overNode = path.find((n) => (n as Node).nodeName === 'TREE-NODE') as TreeNode;
+    const overNode = path
+        .find((n) => (n as Node).nodeName === 'TREE-NODE') as TreeNode;
     if (!overNode) return; // not over any tree-node
 
     const nodeY = overNode.nodeContainer_.offsetTop;

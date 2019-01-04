@@ -83,7 +83,10 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
     ]);
   }
   
-  private closeContextMenu_(x: number, y: number, callback: Array<ContextCallback>) {
+  private closeContextMenu_(
+      x: number,
+      y: number,
+      callback: Array<ContextCallback>) {
     this.contextMenu_.style.height = '0';
     setTimeout(() => {
       this.contextMenu_.style.display = 'none';
@@ -95,7 +98,10 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
     }, CONTEXT_DELAY);
   }
   
-  private openContextMenu_(x: number, y: number, callback: Array<ContextCallback>) {
+  private openContextMenu_(
+      x: number,
+      y: number,
+      callback: Array<ContextCallback>) {
     this.contextMenu_.style.display = 'block';
     this.contextMenu_.style.top = `${y}px`;
     this.contextMenu_.style.left = `${x}px`;

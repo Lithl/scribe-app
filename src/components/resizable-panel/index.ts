@@ -59,7 +59,10 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
   
   ready() {
     super.ready();
-    Gestures.addListener(this, 'track', (e: Event) => this.trackHandler_(e as CustomEvent));
+    Gestures.addListener(
+      this,
+      'track',
+      (e: Event) => this.trackHandler_(e as CustomEvent));
     setTimeout(() => {
       this.children_ = [...this.childNodes]
           .map((node) => node as HTMLElement)
@@ -69,7 +72,9 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
   }
   
   @observe('draggingDirection_', 'children_')
-  protected verticalObserver_(draggingDirection: 'vertical'|'horizontal'|'', children: Array<HTMLElement>) {
+  protected verticalObserver_(
+      draggingDirection: 'vertical' | 'horizontal' | '',
+      children: Array<HTMLElement>) {
     if (!children.length) return;
     if (draggingDirection) {
       this.draggingDirectionChanged_ = true;
@@ -87,11 +92,14 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
         this.height_ = this.getBoundingClientRect().height;
       }
       
-      this.style.height = draggingDirection === 'vertical' ? `${this.height_}px` : '';
+      this.style.height =
+        draggingDirection === 'vertical' ? `${this.height_}px` : '';
     }
   }
   
-  private resetPanelStyles_(panel: HTMLElement, styleProperty: 'width'|'height') {
+  private resetPanelStyles_(
+      panel: HTMLElement,
+      styleProperty: 'width' | 'height') {
     panel.style[styleProperty] = '';
     panel.style.flexShrink = '';
   }
@@ -105,7 +113,8 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
   }
   
   private isKnob_(element: Event) {
-    return (element.target as HTMLElement).className.indexOf('knob-panel-') >= 0;
+    return (element.target as HTMLElement).className
+        .indexOf('knob-panel-') >= 0;
   }
   
   private trackHandler_(event: CustomEvent) {
@@ -150,13 +159,19 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
       this.eventFired_ = true;
     }
     
-    const next = (event.target as HTMLElement).nextElementSibling as HTMLElement;
-    const previous = (event.target as HTMLElement).previousElementSibling as HTMLElement;
+    const next = (event.target as HTMLElement)
+        .nextElementSibling as HTMLElement;
+    const previous = (event.target as HTMLElement)
+        .previousElementSibling as HTMLElement;
     
-    this.nextSiblingDimensions_ = this.nextSiblingDimensions_ || this.computeDimensionsWithoutPadding_(next);
-    this.previousSiblingDimensions_ = this.previousSiblingDimensions_ || this.computeDimensionsWithoutPadding_(previous);
-    this.totalWidth_ = this.totalWidth_ || (event.currentTarget as HTMLElement).getBoundingClientRect().width;
-    this.totalHeight_ = this.totalHeight_ || (event.currentTarget as HTMLElement).getBoundingClientRect().height;
+    this.nextSiblingDimensions_ = this.nextSiblingDimensions_
+        || this.computeDimensionsWithoutPadding_(next);
+    this.previousSiblingDimensions_ = this.previousSiblingDimensions_
+        || this.computeDimensionsWithoutPadding_(previous);
+    this.totalWidth_ = this.totalWidth_
+        || (event.currentTarget as HTMLElement).getBoundingClientRect().width;
+    this.totalHeight_ = this.totalHeight_
+        || (event.currentTarget as HTMLElement).getBoundingClientRect().height;
     
     const hParams = {
       previous,
@@ -173,8 +188,10 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
       offset: Math.abs(event.detail.dy),
     };
     const resizeParams = {
-      offset: this.draggingDirection_ === 'horizontal' ? event.detail.dx : event.detail.dy,
-      params: this.draggingDirection_ === 'horizontal' ? hParams : vParams,
+      offset: this.draggingDirection_ === 'horizontal'
+          ? event.detail.dx : event.detail.dy,
+      params: this.draggingDirection_ === 'horizontal'
+          ? hParams : vParams,
     };
     
     this.resize_(resizeParams);
@@ -190,8 +207,10 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
     if (!cs.paddingBottom) cs.paddingBottom = '0';
     
     return {
-      width: bcr.width - (parseInt(cs.paddingLeft, 10) + parseInt(cs.paddingRight, 10)),
-      height: bcr.height - (parseInt(cs.paddingTop, 10) + parseInt(cs.paddingBottom, 10)),
+      width: bcr.width
+          - (parseInt(cs.paddingLeft, 10) + parseInt(cs.paddingRight, 10)),
+      height: bcr.height
+          - (parseInt(cs.paddingTop, 10) + parseInt(cs.paddingBottom, 10)),
     };
   }
   
@@ -219,12 +238,16 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
     offset < 0 ? this.shrinkPrevious_(params) : this.shrinkNext_(params);
   }
   
-  private isResizedToMinimum_(node: HTMLElement, styleProperty: 'width'|'height') {
+  private isResizedToMinimum_(
+      node: HTMLElement,
+      styleProperty: 'width' | 'height') {
     return parseInt(`${getComputedStyle(node)[styleProperty]}`, 10) === 0;
   }
   
   private shrinkPrevious_(params: DirectionalParams) {
-    this.changeSize_(params.previous, this.previousSiblingDimensions_, params, '-');
+    this.changeSize_(
+        params.previous,
+        this.previousSiblingDimensions_, params, '-');
     if (!this.isResizedToMinimum_(params.previous, params.styleProperty)) {
       this.changeSize_(params.next, this.nextSiblingDimensions_, params, '+');
     }
@@ -233,11 +256,17 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
   private shrinkNext_(params: DirectionalParams) {
     this.changeSize_(params.next, this.nextSiblingDimensions_, params, '-');
     if (!this.isResizedToMinimum_(params.next, params.styleProperty)) {
-      this.changeSize_(params.previous, this.previousSiblingDimensions_, params, '+');
+      this.changeSize_(
+          params.previous,
+          this.previousSiblingDimensions_, params, '+');
     }
   }
   
-  private changeSize_(elem: HTMLElement, dimensions: Rectangle|null, params: DirectionalParams, operator: '+'|'-') {
+  private changeSize_(
+      elem: HTMLElement,
+      dimensions: Rectangle | null,
+      params: DirectionalParams,
+      operator: '+' | '-') {
     if (!dimensions) return;
     
     let current;
@@ -247,7 +276,8 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
       current = dimensions.height;
     }
     const pct = this.getPct_(`${current}`, `${params.total}`);
-    elem.style[params.styleProperty] = `calc(${pct}% ${operator} ${params.offset}px)`;
+    elem.style[params.styleProperty] =
+        `calc(${pct}% ${operator} ${params.offset}px)`;
     elem.style.flexShrink = '0';
   }
 }
