@@ -13,3 +13,12 @@
     Delete
   </paper-item>
 </paper-listbox>
+<paper-dialog id="renameDialog">
+  <h2>Rename node</h2>
+  <div><paper-input id="nodeName" no-label-float></paper-input></div>
+  <div class="buttons">
+    <paper-button class="cancel" on-tap="closeDialog_" tabindex="-1">Cancel</paper-button>
+    <paper-button on-tap="updateNodeName_">Ok</paper-button>
+  </div>
+</paper-dialog>
+<iron-a11y-keys id="nodeNameInputHandler" keys="enter" on-keys-pressed="updateNodeName_"></iron-a11y-keys>

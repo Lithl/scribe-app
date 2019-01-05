@@ -52,6 +52,8 @@
   flex-grow: 1;
   line-height: 24px;
   padding: 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .node-preicon,
@@ -62,6 +64,7 @@
 
 .node-icon {
   width: 24px;
+  min-width: 24px;
   height: 24px;
   @apply(--paper-tree-icon-theme);
 }

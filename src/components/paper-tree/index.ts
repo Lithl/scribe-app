@@ -1,9 +1,15 @@
 /**
  * @fileoverview Typescript/Polymer3 implementation of
  * https://www.webcomponents.org/element/vpusher/paper-tree
+ * with additions useful to this project
  */
 import {PaperListboxElement} from '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
+import * as PaperDialog from '@polymer/paper-dialog/paper-dialog';
+import * as PaperInput from '@polymer/paper-input/paper-input';
+import {IronInputElement} from'@polymer/iron-input/iron-input';
+import '@polymer/paper-button/paper-button';
+import * as IronA11yKeys from '@polymer/iron-a11y-keys/iron-a11y-keys';
 
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 import {customElement, listen, property, query} from '@polymer/decorators';
@@ -42,13 +48,23 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
   @query('#contextMenu')
   private contextMenu_!: PaperListboxElement;
   
+  @query('#renameDialog')
+  private renameDialog_!: PaperDialog.PaperDialogElement;
+  
+  @query('#nodeName')
+  private nodeName_!: PaperInput.PaperInputElement;
+  
+  @query('#nodeNameInputHandler')
+  private nodeNameInputHandler_!: IronA11yKeys.IronA11yKeysElement;
+  
   protected optionsNode_: TreeNode|null = null;
   
   ready() {
     super.ready();
     document.addEventListener('tap', () => {
-      this.closeContextMenu_(0, 0, []);
+      this.closeContextMenu_(0, 0);
     });
+    this.nodeNameInputHandler_!.target = this.nodeName_;
   }
   
   @listen('select', document)
@@ -86,7 +102,7 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
   private closeContextMenu_(
       x: number,
       y: number,
-      callback: Array<ContextCallback>) {
+      callback?: Array<ContextCallback>) {
     this.contextMenu_.style.height = '0';
     setTimeout(() => {
       this.contextMenu_.style.display = 'none';
@@ -101,7 +117,7 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
   private openContextMenu_(
       x: number,
       y: number,
-      callback: Array<ContextCallback>) {
+      callback?: Array<ContextCallback>) {
     this.contextMenu_.style.display = 'block';
     this.contextMenu_.style.top = `${y}px`;
     this.contextMenu_.style.left = `${x}px`;
@@ -120,10 +136,33 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
   }
   
   protected renameNode_() {
-    console.log('rename this.optionsNode_');
+    if (!this.optionsNode_) return;
+    this.closeContextMenu_(0, 0);
+    
+    this.nodeName_.value = this.optionsNode_.data.name;
+    const ironInput = this.nodeName_.inputElement as IronInputElement;
+    const input = ironInput.inputElement;
+    setTimeout(() => input.select());
+    this.renameDialog_.open();
   }
   
   protected deleteNode_() {
     console.log('delete this.optionsNode_');
+  }
+  
+  protected closeDialog_(e: Event) {
+    const path = [...e.composedPath()].map((e) => e as HTMLElement);
+    const dialog = path.find((e) => {
+      return e.nodeName === 'PAPER-DIALOG';
+    }) as PaperDialog.PaperDialogElement;
+    if (!dialog) return;
+    dialog.close();
+  }
+  
+  protected updateNodeName_() {
+    if (!this.optionsNode_) return;
+    const newName = this.nodeName_.value;
+    this.optionsNode_.set('data.name', newName);
+    this.renameDialog_.close();
   }
 }
