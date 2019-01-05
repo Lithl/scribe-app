@@ -13,6 +13,10 @@
     Delete
   </paper-item>
 </paper-listbox>
+<template is="dom-if" if="[[!data.length]]">
+  <span class="placeholder">There are no items to display. Add an item from
+  File > New...</span>
+</template>
 <paper-dialog id="renameDialog">
   <h2>Rename node</h2>
   <div><paper-input id="nodeName" no-label-float></paper-input></div>
