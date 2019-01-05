@@ -38,27 +38,33 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
     // @ts-ignore
     return html([template]);
   }
-  
+
   @property()
   data!: Array<RootNodeData>;
-  
+
   @property({type: Object, notify: true})
-  selected: HTMLElement|null = null;
-  
+  selected: HTMLElement | null = null;
+
   @query('#contextMenu')
   private contextMenu_!: PaperListboxElement;
-  
+
   @query('#renameDialog')
   private renameDialog_!: PaperDialog.PaperDialogElement;
-  
+
+  @query('#deleteDialog')
+  private deleteDialog_!: PaperDialog.PaperDialogElement;
+
   @query('#nodeName')
   private nodeName_!: PaperInput.PaperInputElement;
-  
+
+  @query('#nodeToDelete')
+  private nodeToDelete_!: HTMLSpanElement;
+
   @query('#nodeNameInputHandler')
   private nodeNameInputHandler_!: IronA11yKeys.IronA11yKeysElement;
-  
+
   protected optionsNode_: TreeNode|null = null;
-  
+
   ready() {
     super.ready();
     document.addEventListener('tap', () => {
@@ -73,7 +79,7 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
     if (this.selected) {
       this.selected.classList.toggle('selected', false);
     }
-    
+
     if (e.detail && e.detail.tagName === 'TREE-NODE') {
       this.selected = e.detail;
       if (e.detail.selectable) {
@@ -138,7 +144,7 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
   protected renameNode_() {
     if (!this.optionsNode_) return;
     this.closeContextMenu_(0, 0);
-    
+
     this.nodeName_.value = this.optionsNode_.data.name;
     const ironInput = this.nodeName_.inputElement as IronInputElement;
     const input = ironInput.inputElement;
@@ -147,7 +153,11 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
   }
   
   protected deleteNode_() {
-    console.log('delete this.optionsNode_');
+    if (!this.optionsNode_) return;
+    this.closeContextMenu_(0, 0);
+
+    this.nodeToDelete_.innerText = this.optionsNode_.data.name;
+    this.deleteDialog_.open();
   }
   
   protected closeDialog_(e: Event) {
@@ -164,5 +174,28 @@ export class PaperTree extends DeclarativeEventListeners(PolymerElement) {
     const newName = this.nodeName_.value;
     this.optionsNode_.set('data.name', newName);
     this.renameDialog_.close();
+  }
+  
+  protected confirmDelete_() {
+    if (!this.optionsNode_) return;
+    const uuid = this.optionsNode_.uuid;
+    const parent = this.optionsNode_.getParentNode();
+    let siblings;
+    if (!parent) return;
+    if (parent instanceof PaperTree) {
+      siblings = [...parent.shadowRoot!.querySelectorAll('tree-node')]
+          .map((e) => e as TreeNode);
+    } else {
+      siblings = parent.getChildren();
+    }
+
+    const idx = siblings.findIndex((e) => e.uuid === uuid);
+    if (parent instanceof PaperTree) {
+      parent.splice('data', idx, 1);
+    } else {
+      parent.splice('data.children', idx, 1);
+    }
+
+    this.deleteDialog_.close();
   }
 }

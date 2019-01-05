@@ -97,7 +97,7 @@ export class TreeNode extends PolymerElement {
   @query('.node-container')
   protected nodeContainer_!: HTMLDivElement;
   
-  private uuid_ = uuid();
+  readonly uuid = uuid();
 
   ready() {
     super.ready();
@@ -240,13 +240,13 @@ export class TreeNode extends PolymerElement {
       }
     }
     
-    const uuidChain = [this.uuid_];
+    const uuidChain = [this.uuid];
     let anscestor: PaperTree | TreeNode | null | undefined = parent;
     if (anscestor instanceof TreeNode) {
-      uuidChain.unshift(anscestor.uuid_);
+      uuidChain.unshift(anscestor.uuid);
       while (anscestor = anscestor instanceof TreeNode
           ? anscestor.getParentNode() : null) {
-        if (anscestor instanceof TreeNode) uuidChain.unshift(anscestor.uuid_);
+        if (anscestor instanceof TreeNode) uuidChain.unshift(anscestor.uuid);
       }
     }
 
@@ -348,13 +348,13 @@ export class TreeNode extends PolymerElement {
           sourceParent.getChildren()
           : [...tree!.shadowRoot!.querySelectorAll('tree-node')]
               .map((e) => e as TreeNode);
-      sourceParent = children.find((c) => c.uuid_ === id);
+      sourceParent = children.find((c) => c.uuid === id);
     }
     if (!sourceParent || !sourceParent.data.children) return;
     
     const sourceUuid = data.uuidChain[data.uuidChain.length - 1];
     const idx = sourceParent.getChildren()
-        .findIndex((c) => c.uuid_ === sourceUuid);
+        .findIndex((c) => c.uuid === sourceUuid);
     const spliced = sourceParent.data.children.splice(idx, 1);
     if (spliced.length !== 1) return;
     const transferredData = spliced[0];
@@ -386,7 +386,7 @@ export class TreeNode extends PolymerElement {
         if (!insertParent || insertParent instanceof PaperTree) return;
         else {
           insertIdx = insertParent.getChildren()
-              .findIndex((e) => e.uuid_ === this.uuid_);
+              .findIndex((e) => e.uuid === this.uuid);
         }
       }
     }
