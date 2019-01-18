@@ -1,0 +1,21 @@
+<style include="common"></style>
+<style include="editor"></style>
+
+<div id="container">
+  <div>
+    <template is="dom-if" if="[[parentIdentifier]]">
+      <h2 class$="[[hideParentIdentifierClass]]">[[parentIdentifier]]</h2>
+    </template>
+    <h2>[[identifier]]</h2>
+  </div>
+  
+  <paper-card animated-shadow>
+    <div
+        id="body"
+        contenteditable="true"
+        on-focus="bodyFocused_"
+        on-blur="bodyBlurred_">
+      [[text]]
+    </div>
+  </paper-card>
+</div>

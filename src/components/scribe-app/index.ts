@@ -5,6 +5,7 @@ import {DomRepeat} from '@polymer/polymer/lib/elements/dom-repeat';
 
 import {PaperTree, TreeNode, RootIconType, RootNodeData, ParentNodeData, LeafNodeData} from '../paper-tree';
 import {MenuBar} from '../menu-bar';
+import {RichEditorCollection} from '../rich-editor-collection';
 import '../resizable-panel';
 
 import * as template from './template.html';
@@ -40,6 +41,9 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   
   @query('menu-bar')
   protected menu_!: MenuBar;
+  
+  @query('rich-editor-collection')
+  protected editorCollection_!: RichEditorCollection;
   
   private lastSelectedNode_: TreeNode|null = null;
   
@@ -190,6 +194,18 @@ export class ScribeApp extends DeclarativeEventListeners(PolymerElement) {
   treeItemSelected(e: Event) {
     const treeNode = (e as CustomEvent).detail as TreeNode;
     this.lastSelectedNode_ = treeNode;
+    
+    if (!this.editorCollection_) return;
+    if (treeNode.data instanceof LeafNodeData) {
+      let parent = treeNode.getParentNode();
+      if (!parent || !(parent instanceof TreeNode)) return;
+      while (!(parent.data instanceof RootNodeData)) {
+        parent = parent.getParentNode();
+        if (!parent || !(parent instanceof TreeNode)) return;
+      }
+      this.editorCollection_.editorData = parent.data.children;
+      this.editorCollection_.scrollToBlock(treeNode.data);
+    }
   }
   
   @listen('new-chapter', document)

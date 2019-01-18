@@ -1,0 +1,10 @@
+<style include="common"></style>
+<style include="editor-collection"></style>
+
+<template is="dom-repeat" items="[[editorDataFlat_]]">
+  <rich-editor
+      parent-identifier="[[item.parentIdentifier]]"
+      hide-parent-identifier="[[item.hideParentIdentifier]]"
+      identifier="[[item.identifier]]"
+      text="[[item.text]]"></rich-editor>
+</template>

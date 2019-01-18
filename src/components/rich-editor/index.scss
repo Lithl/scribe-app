@@ -1,0 +1,43 @@
+paper-card {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+#body {
+  min-height: 150px;
+  outline: none;
+}
+
+#container {
+  h2 {
+    display: inline-block;
+    font-size: 1.25em;
+    color: #ccc;
+    font-style: italic;
+    margin-bottom: 8px;
+    
+    &:first-of-type {
+      margin-left: 1em;
+    }
+    
+    &:not(:last-of-type) {
+      margin-right: 2em;
+    }
+    
+    &.hide-parent {
+      visibility: hidden;
+    }
+  }
+  
+  &.body-focused {
+    paper-card {
+      @apply --shadow-elevation-4dp;
+    }
+    
+    h2 {
+      color: black;
+      font-style: normal;
+    }
+  }
+}

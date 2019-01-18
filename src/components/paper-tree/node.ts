@@ -67,10 +67,12 @@ export class LeafNodeData implements TreeNodeData {
   icon: 'device:wallpaper' | undefined;
   readonly selectable = true;
   name = '';
+  text = '';
   
-  constructor(name: string, icon?: 'device:wallpaper') {
+  constructor(name: string, icon?: 'device:wallpaper', text?: string) {
     this.icon = icon;
     this.name = name;
+    this.text = text || '';
   }
 }
 
