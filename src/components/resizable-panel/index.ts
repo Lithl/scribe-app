@@ -119,7 +119,7 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
   
   private trackHandler_(event: CustomEvent) {
     const state = {
-      start: (_: CustomEvent) => this.onTrackStart_(),
+      start: (e: CustomEvent) => this.onTrackStart_(e),
       track: (e: CustomEvent) => this.onTrack_(e),
       end: (_: CustomEvent) => this.onTrackEnd_(),
     };
@@ -142,8 +142,10 @@ export class ResizablePanel extends GestureEventListeners(PolymerElement) {
     fn(event);
   }
   
-  private onTrackStart_() {
-    getSelection().removeAllRanges();
+  private onTrackStart_(event: CustomEvent) {
+    if (this.isKnob_(event)) {
+      getSelection().removeAllRanges();
+    }
   }
   
   private onTrack_(event: CustomEvent) {

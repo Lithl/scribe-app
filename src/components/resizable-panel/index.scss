@@ -19,7 +19,7 @@
     margin-top: calc(var(--resizable-panels-knob-size, 4px) / 2 * -1);
     margin-bottom: calc(var(--resizable-panels-knob-size, 4px) / 2 * -1);
     cursor: row-resize;
-    @apply(--resizable-panels-knob);
+    @apply --resizable-panels-knob;
   }
 }
 
@@ -41,12 +41,12 @@
   background-color: var(--resizable-panels-knob-color, white);
   cursor: col-resize;
   flex-shrink: 0;
-  @apply(--resizable-panels-knob);
+  @apply --resizable-panels-knob;
   
   &::before {
     content: var(--resizable-panels-knob-indicator, '');
     display: inline-block;
     word-break: break-all;
-    @apply(--resizable-panels-knob-before);
+    @apply --resizable-panels-knob-before;
   }
 }

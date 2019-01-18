@@ -36,7 +36,7 @@
   
   &::before {
     margin-right: 5px;
-    @apply(--paper-tree-toggle-theme);
+    @apply --paper-tree-toggle-theme;
   }
   
   &.collapsed::before {
@@ -66,7 +66,7 @@
   width: 24px;
   min-width: 24px;
   height: 24px;
-  @apply(--paper-tree-icon-theme);
+  @apply --paper-tree-icon-theme;
 }
 
 #actions {
